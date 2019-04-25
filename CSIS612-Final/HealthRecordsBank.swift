@@ -11,58 +11,59 @@ import Foundation
 class HealthRecordsBank{
     
     var archive:[HealthRecord] = []
-    private var frontDesk:[HealthRecord] = []
+    var frontDesk:[HealthRecord] = []
     
-    private var archiveHoldPenalty:Int
-    private var frontDeskLedger:[String:Int] = [:]
-    private let frontDeskHoldTime: Int = 5
+    var archiveHoldPenalty:Int
+    var frontDeskLedger:[String:Int] = [:]
+    var frontDeskHoldTime: Int = 5
     
-    init(penalty:Int) {
+    init(penalty:Int, frontDeskHoldTime:Int) {
         self.archiveHoldPenalty = penalty
+//        self.frontDeskHoldTime = 5
     }
     
     private func recordAvailable(for patientName:String) -> Bool{
-        for record in archive {
-            if record.patientName == patientName{
-                return  record.available
-            }
-        }
-        return false
+        return frontDesk.contains(where: {$0.patientName == patientName}) && frontDesk.first(where: {$0.patientName == patientName})?.holdTimeLeft == 0
     }
     
     func record(for patientName:String) -> HealthRecord? {
-        if recordAvailable(for: patientName){
-            //Check the front desk
-            for record in frontDesk {
-                if record.patientName == patientName {
-                    frontDeskLedger[patientName] = frontDeskHoldTime
-                    return record
-                }
-            }
-            
-            //Record is in archive
-            let rtnRecord = archive.first(where: {$0.patientName == patientName})
-            rtnRecord?.holdTimeLeft += archiveHoldPenalty
-            
-            frontDesk.append(rtnRecord!)
+        if recordAvailable(for: patientName) {
+            let rtnRecord = frontDesk.first(where: {$0.patientName == patientName})
             frontDeskLedger[patientName] = frontDeskHoldTime
             return rtnRecord
+        }
+        else if archive.contains(where: {$0.patientName == patientName}){
+            //Record is in archive
+            guard let index = archive.firstIndex(where: {$0.patientName == patientName})else{
+                return nil
+            }
+            let rtnRecord = archive[index]
+            rtnRecord.holdTimeLeft += archiveHoldPenalty
+            
+            frontDesk.append(rtnRecord)
+            frontDeskLedger[patientName] = frontDeskHoldTime
+            archive.remove(at: index)
         }
         return nil
     }
     
     func tick(){
         //Decrement hold on all health records
-        for record in archive {
+        for record in archive + frontDesk {
             if record.holdTimeLeft > 0{
                 record.holdTimeLeft -= 1
             }
         }
-        
+
         let keys = Array(frontDeskLedger.keys)
         for key in keys {
             frontDeskLedger[key] = frontDeskLedger[key]! - 1
             if frontDeskLedger[key]! <= 0 {
+                guard let index = frontDesk.firstIndex(where: {$0.patientName == key})else {
+                    return
+                }
+                archive.append(frontDesk[index])
+                frontDesk.remove(at: index)
                 frontDeskLedger.removeValue(forKey: key)
             }
         }

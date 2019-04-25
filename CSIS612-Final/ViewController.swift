@@ -14,7 +14,12 @@ class ViewController: UIViewController {
     @IBOutlet weak var numPatientsTextBox: UITextField!
     @IBOutlet weak var maxRecordHoldTextBox: UITextField!
     //Views
-    @IBOutlet weak var recordsTableView: UITableView!
+    @IBOutlet weak var frontDeskTableView: UITableView!
+    @IBOutlet weak var archiveTableView: UITableView!
+    
+    @IBOutlet weak var frontDeskTime: UILabel!
+    @IBOutlet weak var archiveTime: UILabel!
+    
     //Labels
     @IBOutlet weak var tickLabel: UILabel!
         //Column1
@@ -65,12 +70,20 @@ class ViewController: UIViewController {
     @IBOutlet weak var P3: UIButton!
     @IBOutlet weak var P4: UIButton!
     @IBOutlet weak var P5: UIButton!
+    
+    @IBOutlet weak var P1Time: UILabel!
+    @IBOutlet weak var P2Time: UILabel!
+    @IBOutlet weak var P3Time: UILabel!
+    @IBOutlet weak var P4Time: UILabel!
+    @IBOutlet weak var P5Time: UILabel!
+    
     var procedureButtns:[UIButton] = []
     var allProcedures:[Procedure] = []
     
     //Additional vars
     var gameMatrix:[[String]] = []
-    var tableCellId = "recordCell"
+    var frontDeskTableCellId = "frontDeskRecordCell"
+    var archiveRecordCellId = "archiveRecordCell"
     var collectionCellId = "queueCell"
     
     var numPatients:Int = 0
@@ -82,13 +95,16 @@ class ViewController: UIViewController {
     var allPatientsCopy:[Patient] = []
     var nextPatients:[Patient] = []
     var patientLabels:[UILabel] = []
-    var recordsBank:HealthRecordsBank = HealthRecordsBank(penalty: 5)
+    var recordsBank:HealthRecordsBank = HealthRecordsBank(penalty: 0, frontDeskHoldTime: 0)
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        recordsTableView.delegate = self
-        recordsTableView.dataSource = self
+        frontDeskTableView.delegate = self
+        frontDeskTableView.dataSource = self
+        
+        archiveTableView.delegate = self
+        archiveTableView.dataSource = self
         
         tickLabel.text = String(tick)
         
@@ -116,7 +132,8 @@ class ViewController: UIViewController {
         populateNextPatients()
         //Reload stuff
         resizeLabels()
-        recordsTableView.reloadData()
+        frontDeskTableView.reloadData()
+        archiveTableView.reloadData()
     }
     
     private func findPatientByName(name:String) -> Patient? {
@@ -146,11 +163,11 @@ class ViewController: UIViewController {
     private func movePatients(){
         var moveIn:[String] = []
         //Add record holds to patients in procedures
-        recordsBank.record(for: P1.titleLabel?.text ?? " ")?.holdTimeLeft = allProcedures[0].recordHoldTime
-        recordsBank.record(for: P2.titleLabel?.text ?? " ")?.holdTimeLeft = allProcedures[1].recordHoldTime
-        recordsBank.record(for: P3.titleLabel?.text ?? " ")?.holdTimeLeft = allProcedures[2].recordHoldTime
-        recordsBank.record(for: P4.titleLabel?.text ?? " ")?.holdTimeLeft = allProcedures[3].recordHoldTime
-        recordsBank.record(for: P5.titleLabel?.text ?? " ")?.holdTimeLeft = allProcedures[4].recordHoldTime
+        recordsBank.record(for: P1.titleLabel?.text ?? " ")?.holdTimeLeft += allProcedures[0].recordHoldTime
+        recordsBank.record(for: P2.titleLabel?.text ?? " ")?.holdTimeLeft += allProcedures[1].recordHoldTime
+        recordsBank.record(for: P3.titleLabel?.text ?? " ")?.holdTimeLeft += allProcedures[2].recordHoldTime
+        recordsBank.record(for: P4.titleLabel?.text ?? " ")?.holdTimeLeft += allProcedures[3].recordHoldTime
+        recordsBank.record(for: P5.titleLabel?.text ?? " ")?.holdTimeLeft += allProcedures[4].recordHoldTime
         
         //Move current patients in procedures to a temp "move-in" array
         for bttn in procedureButtns{
@@ -247,7 +264,10 @@ class ViewController: UIViewController {
         
         numPatients = Int(numPatientsTextBox.text!) ?? 0
         maxRecordHoldTime = Int(maxRecordHoldTextBox.text!) ?? 0
-        recordsBank = HealthRecordsBank(penalty: Int.random(in: 0...maxRecordHoldTime))
+        recordsBank = HealthRecordsBank(penalty: Int.random(in: 0...maxRecordHoldTime), frontDeskHoldTime: Int.random(in: 0...maxRecordHoldTime))
+        
+        frontDeskTime.text = "(\(String(recordsBank.frontDeskHoldTime)))"
+        archiveTime.text = "(\(String(recordsBank.archiveHoldPenalty)))"
         
         let procedure1:Procedure = Procedure(title: "P1", recordHoldTime: Int.random(in: 0...maxRecordHoldTime))
         let procedure2:Procedure = Procedure(title: "P2", recordHoldTime: Int.random(in: 0...maxRecordHoldTime))
@@ -256,6 +276,12 @@ class ViewController: UIViewController {
         let procedure5:Procedure = Procedure(title: "P5", recordHoldTime: Int.random(in: 0...maxRecordHoldTime))
         allProcedures = [procedure1, procedure2, procedure3, procedure4, procedure5]
         
+        P1Time.text = "(\(String(procedure1.recordHoldTime)))"
+        P2Time.text = "(\(String(procedure2.recordHoldTime)))"
+        P3Time.text = "(\(String(procedure3.recordHoldTime)))"
+        P4Time.text = "(\(String(procedure4.recordHoldTime)))"
+        P5Time.text = "(\(String(procedure5.recordHoldTime)))"
+
         var i = 0
         allPatients = []
         allPatientsCopy = []
@@ -277,7 +303,8 @@ class ViewController: UIViewController {
         
         populateNextPatients()
         resizeLabels()
-        recordsTableView.reloadData()
+        frontDeskTableView.reloadData()
+        archiveTableView.reloadData()
     }
     
     //Populate the next patients array
@@ -353,13 +380,33 @@ class ViewController: UIViewController {
 //Record Table View
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return recordsBank.archive.count
+        
+        if tableView.restorationIdentifier == "archiveRecordsTable"{
+            return recordsBank.archive.count
+        }
+        else{
+            return recordsBank.frontDesk.count
+        }
+        
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let patient = allPatientsCopy[indexPath.row]
-        let cell = recordsTableView.dequeueReusableCell(withIdentifier: self.tableCellId)
-        cell?.textLabel?.text = "\(patient.name) - \(patient.healthRecord.available) - HoldLeft: \(patient.healthRecord.holdTimeLeft)"
-        return cell!
+        if tableView.restorationIdentifier == "archiveRecordsTable" {
+            let patRecord = recordsBank.archive[indexPath.row]
+            let patient = findPatientByName(name: patRecord.patientName)!
+
+            let cell = archiveTableView.dequeueReusableCell(withIdentifier: self.archiveRecordCellId)
+            cell?.textLabel?.text = "\(patient.name) - \(patient.healthRecord.available) - HoldLeft: \(patient.healthRecord.holdTimeLeft)"
+            return cell!
+        }
+        else{
+            let patRecord = recordsBank.frontDesk[indexPath.row]
+            let patient = findPatientByName(name: patRecord.patientName)!
+            let cell = frontDeskTableView.dequeueReusableCell(withIdentifier: self.frontDeskTableCellId)
+            cell?.textLabel?.text = "\(patient.name) - \(patient.healthRecord.available) - HoldLeft: \(patient.healthRecord.holdTimeLeft)(\(recordsBank.frontDeskLedger[patient.name]!))"
+            cell?.textLabel?.sizeToFit()
+            return cell!
+        }
     }
 }
