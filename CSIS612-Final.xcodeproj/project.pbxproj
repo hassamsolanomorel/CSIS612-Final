@@ -7,14 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1549F25B2271288F00F74358 /* ProcedureCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1549F25A2271288F00F74358 /* ProcedureCollectionViewCell.swift */; };
+		1549F25D2271289A00F74358 /* PatientCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1549F25C2271289A00F74358 /* PatientCollectionViewCell.swift */; };
 		158807C4226FE417007E85F2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158807C3226FE417007E85F2 /* AppDelegate.swift */; };
 		158807C6226FE417007E85F2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158807C5226FE417007E85F2 /* ViewController.swift */; };
 		158807C9226FE417007E85F2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 158807C7226FE417007E85F2 /* Main.storyboard */; };
 		158807CB226FE419007E85F2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 158807CA226FE419007E85F2 /* Assets.xcassets */; };
 		158807CE226FE419007E85F2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 158807CC226FE419007E85F2 /* LaunchScreen.storyboard */; };
+		158807D6226FE5A1007E85F2 /* HealthRecordsBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158807D5226FE5A1007E85F2 /* HealthRecordsBank.swift */; };
+		158807DC226FE63A007E85F2 /* HealthRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158807DB226FE63A007E85F2 /* HealthRecord.swift */; };
+		158807DE226FE6F5007E85F2 /* Patient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158807DD226FE6F5007E85F2 /* Patient.swift */; };
+		158807E0226FE717007E85F2 /* Procedure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158807DF226FE717007E85F2 /* Procedure.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1549F25A2271288F00F74358 /* ProcedureCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcedureCollectionViewCell.swift; sourceTree = "<group>"; };
+		1549F25C2271289A00F74358 /* PatientCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientCollectionViewCell.swift; sourceTree = "<group>"; };
 		158807C0226FE417007E85F2 /* CSIS612-Final.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CSIS612-Final.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		158807C3226FE417007E85F2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		158807C5226FE417007E85F2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -22,6 +30,10 @@
 		158807CA226FE419007E85F2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		158807CD226FE419007E85F2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		158807CF226FE419007E85F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		158807D5226FE5A1007E85F2 /* HealthRecordsBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthRecordsBank.swift; sourceTree = "<group>"; };
+		158807DB226FE63A007E85F2 /* HealthRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthRecord.swift; sourceTree = "<group>"; };
+		158807DD226FE6F5007E85F2 /* Patient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Patient.swift; sourceTree = "<group>"; };
+		158807DF226FE717007E85F2 /* Procedure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Procedure.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,10 +68,16 @@
 			children = (
 				158807C3226FE417007E85F2 /* AppDelegate.swift */,
 				158807C5226FE417007E85F2 /* ViewController.swift */,
+				158807DD226FE6F5007E85F2 /* Patient.swift */,
+				158807DF226FE717007E85F2 /* Procedure.swift */,
+				158807DB226FE63A007E85F2 /* HealthRecord.swift */,
+				158807D5226FE5A1007E85F2 /* HealthRecordsBank.swift */,
 				158807C7226FE417007E85F2 /* Main.storyboard */,
 				158807CA226FE419007E85F2 /* Assets.xcassets */,
 				158807CC226FE419007E85F2 /* LaunchScreen.storyboard */,
 				158807CF226FE419007E85F2 /* Info.plist */,
+				1549F25A2271288F00F74358 /* ProcedureCollectionViewCell.swift */,
+				1549F25C2271289A00F74358 /* PatientCollectionViewCell.swift */,
 			);
 			path = "CSIS612-Final";
 			sourceTree = "<group>";
@@ -96,6 +114,7 @@
 				TargetAttributes = {
 					158807BF226FE417007E85F2 = {
 						CreatedOnToolsVersion = 9.4;
+						LastSwiftMigration = 1020;
 					};
 				};
 			};
@@ -136,7 +155,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				158807C6226FE417007E85F2 /* ViewController.swift in Sources */,
+				158807E0226FE717007E85F2 /* Procedure.swift in Sources */,
+				1549F25B2271288F00F74358 /* ProcedureCollectionViewCell.swift in Sources */,
 				158807C4226FE417007E85F2 /* AppDelegate.swift in Sources */,
+				158807D6226FE5A1007E85F2 /* HealthRecordsBank.swift in Sources */,
+				158807DC226FE63A007E85F2 /* HealthRecord.swift in Sources */,
+				1549F25D2271289A00F74358 /* PatientCollectionViewCell.swift in Sources */,
+				158807DE226FE6F5007E85F2 /* Patient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,7 +314,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "hassam.CSIS612-Final";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -307,7 +332,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "hassam.CSIS612-Final";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
