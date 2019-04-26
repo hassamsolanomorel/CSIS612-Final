@@ -13,10 +13,10 @@ class ViewController: UIViewController {
     //Inputs
     @IBOutlet weak var numPatientsTextBox: UITextField!
     @IBOutlet weak var maxRecordHoldTextBox: UITextField!
+   
     //Views
     @IBOutlet weak var frontDeskTableView: UITableView!
     @IBOutlet weak var archiveTableView: UITableView!
-    
     @IBOutlet weak var frontDeskTime: UILabel!
     @IBOutlet weak var archiveTime: UILabel!
     
@@ -34,36 +34,37 @@ class ViewController: UIViewController {
     @IBOutlet weak var L32: UILabel!
     @IBOutlet weak var L42: UILabel!
     @IBOutlet weak var L52: UILabel!
-    //Column3
+        //Column3
     @IBOutlet weak var L13: UILabel!
     @IBOutlet weak var L23: UILabel!
     @IBOutlet weak var L33: UILabel!
     @IBOutlet weak var L43: UILabel!
     @IBOutlet weak var L53: UILabel!
-    //Column4
+        //Column4
     @IBOutlet weak var L14: UILabel!
     @IBOutlet weak var L24: UILabel!
     @IBOutlet weak var L34: UILabel!
     @IBOutlet weak var L44: UILabel!
     @IBOutlet weak var L54: UILabel!
-    //Column5
+        //Column5
     @IBOutlet weak var L15: UILabel!
     @IBOutlet weak var L25: UILabel!
     @IBOutlet weak var L35: UILabel!
     @IBOutlet weak var L45: UILabel!
     @IBOutlet weak var L55: UILabel!
-    //Next Patients
+        //Next Patients
     @IBOutlet weak var patient1: UILabel!
     @IBOutlet weak var patient2: UILabel!
     @IBOutlet weak var patient3: UILabel!
     @IBOutlet weak var patient4: UILabel!
     @IBOutlet weak var patient5: UILabel!
-    
+        //Aggregations
     var col1:[UILabel] = []
     var col2:[UILabel] = []
     var col3:[UILabel] = []
     var col4:[UILabel] = []
     var col5:[UILabel] = []
+    
     //Procedure Buttons
     @IBOutlet weak var P1: UIButton!
     @IBOutlet weak var P2: UIButton!
@@ -145,120 +146,6 @@ class ViewController: UIViewController {
         return nil
     }
     
-    private func getArrayForProcedure(title:String) -> [UILabel]{
-        switch title {
-        case "P1":
-            return col1
-        case "P2":
-            return col2
-        case "P3":
-            return col3
-        case "P4":
-            return col4
-        default:
-            return col5
-        }
-    }
-    
-    private func movePatients(){
-        var moveIn:[String] = []
-        //Add record holds to patients in procedures
-        recordsBank.record(for: P1.titleLabel?.text ?? " ")?.holdTimeLeft += allProcedures[0].recordHoldTime
-        recordsBank.record(for: P2.titleLabel?.text ?? " ")?.holdTimeLeft += allProcedures[1].recordHoldTime
-        recordsBank.record(for: P3.titleLabel?.text ?? " ")?.holdTimeLeft += allProcedures[2].recordHoldTime
-        recordsBank.record(for: P4.titleLabel?.text ?? " ")?.holdTimeLeft += allProcedures[3].recordHoldTime
-        recordsBank.record(for: P5.titleLabel?.text ?? " ")?.holdTimeLeft += allProcedures[4].recordHoldTime
-        
-        //Move current patients in procedures to a temp "move-in" array
-        for bttn in procedureButtns{
-            if bttn.titleLabel?.text != "" {
-                moveIn.append(bttn.titleLabel!.text!)
-            }
-        }
-        P1.setTitle(" ", for: .normal)
-        P2.setTitle(" ", for: .normal)
-        P3.setTitle(" ", for: .normal)
-        P4.setTitle(" ", for: .normal)
-        P5.setTitle(" ", for: .normal)
-
-        //Move patients by column
-            //Column 1
-        var patRecord = recordsBank.record(for: col1[0].text ?? "")
-        if patRecord != nil {
-            P1.setTitle(col1[0].text, for: UIControl.State.normal)
-            var i = 1
-            while i < 5 {
-                col1[i-1].text = col1[i].text
-                i += 1
-            }
-        }
-            //Column2
-        patRecord = recordsBank.record(for: col2[0].text ?? "")
-        if patRecord != nil {
-            P2.setTitle(col2[0].text, for: UIControl.State.normal)
-            var i = 1
-            while i < 5 {
-                col2[i-1].text = col2[i].text
-                i += 1
-            }
-        }
-            //Column3
-        patRecord = recordsBank.record(for: col3[0].text ?? "")
-        if patRecord != nil {
-            P3.setTitle(col3[0].text, for: UIControl.State.normal)
-            var i = 1
-            while i < 5 {
-                col3[i-1].text = col3[i].text
-                i += 1
-            }
-        }
-            //Column4
-        patRecord = recordsBank.record(for: col4[0].text ?? "")
-        if patRecord != nil {
-            P4.setTitle(col4[0].text, for: UIControl.State.normal)
-            var i = 1
-            while i < 5 {
-                col4[i-1].text = col4[i].text
-                i += 1
-            }
-        }
-            //Column5
-        patRecord = recordsBank.record(for: col5[0].text ?? "")
-        if patRecord != nil {
-            P5.setTitle(col5[0].text, for: UIControl.State.normal)
-            var i = 1
-            while i < 5 {
-                col5[i-1].text = col5[i].text
-                i += 1
-            }
-        }
-        
-        //Add "next patients" to "move-in" array
-        for patient in nextPatients {
-            moveIn.append(patient.name)
-        }
-        //Randomize "move-in" array
-        moveIn.shuffle()
-        //Add patients in "move-in" array to procedure lines
-        for patientName in moveIn {
-            //Find the patient object
-            let patient = findPatientByName(name: patientName)
-            //Check if patient has more procedures
-            if patient != nil && patient!.hasMoreProcedures() {
-                //Yes - move patient to end of respective line
-                let procedureQueue = getArrayForProcedure(title: patient!.removeProcedure()!.title)
-                for label in procedureQueue {
-                    if label.text == "" {
-                        label.text = patientName
-                        break
-                    }
-                }
-            }
-        }
-        
-        recordsBank.tick()
-    }
-    
     @IBAction func didPressGenerate(_ sender: Any) {
         resetGameBoard()
         
@@ -307,6 +194,121 @@ class ViewController: UIViewController {
         archiveTableView.reloadData()
     }
     
+    private func getArrayForProcedure(title:String) -> [UILabel]{
+        switch title {
+        case "P1":
+            return col1
+        case "P2":
+            return col2
+        case "P3":
+            return col3
+        case "P4":
+            return col4
+        default:
+            return col5
+        }
+    }
+    
+    //Manage movement of strings on screen
+    private func movePatients(){
+        var moveIn:[String] = []
+        //Add record holds to patients in procedures
+        recordsBank.record(for: P1.titleLabel?.text ?? " ")?.holdTimeLeft += allProcedures[0].recordHoldTime
+        recordsBank.record(for: P2.titleLabel?.text ?? " ")?.holdTimeLeft += allProcedures[1].recordHoldTime
+        recordsBank.record(for: P3.titleLabel?.text ?? " ")?.holdTimeLeft += allProcedures[2].recordHoldTime
+        recordsBank.record(for: P4.titleLabel?.text ?? " ")?.holdTimeLeft += allProcedures[3].recordHoldTime
+        recordsBank.record(for: P5.titleLabel?.text ?? " ")?.holdTimeLeft += allProcedures[4].recordHoldTime
+        
+        //Move current patients in procedures to a temp "move-in" array
+        for bttn in procedureButtns{
+            if bttn.titleLabel?.text != "" {
+                moveIn.append(bttn.titleLabel!.text!)
+            }
+        }
+        P1.setTitle(" ", for: .normal)
+        P2.setTitle(" ", for: .normal)
+        P3.setTitle(" ", for: .normal)
+        P4.setTitle(" ", for: .normal)
+        P5.setTitle(" ", for: .normal)
+        
+        //Move patients by column
+        //Column 1
+        var patRecord = recordsBank.record(for: col1[0].text ?? "")
+        if patRecord != nil {
+            P1.setTitle(col1[0].text, for: UIControl.State.normal)
+            var i = 1
+            while i < 5 {
+                col1[i-1].text = col1[i].text
+                i += 1
+            }
+        }
+        //Column2
+        patRecord = recordsBank.record(for: col2[0].text ?? "")
+        if patRecord != nil {
+            P2.setTitle(col2[0].text, for: UIControl.State.normal)
+            var i = 1
+            while i < 5 {
+                col2[i-1].text = col2[i].text
+                i += 1
+            }
+        }
+        //Column3
+        patRecord = recordsBank.record(for: col3[0].text ?? "")
+        if patRecord != nil {
+            P3.setTitle(col3[0].text, for: UIControl.State.normal)
+            var i = 1
+            while i < 5 {
+                col3[i-1].text = col3[i].text
+                i += 1
+            }
+        }
+        //Column4
+        patRecord = recordsBank.record(for: col4[0].text ?? "")
+        if patRecord != nil {
+            P4.setTitle(col4[0].text, for: UIControl.State.normal)
+            var i = 1
+            while i < 5 {
+                col4[i-1].text = col4[i].text
+                i += 1
+            }
+        }
+        //Column5
+        patRecord = recordsBank.record(for: col5[0].text ?? "")
+        if patRecord != nil {
+            P5.setTitle(col5[0].text, for: UIControl.State.normal)
+            var i = 1
+            while i < 5 {
+                col5[i-1].text = col5[i].text
+                i += 1
+            }
+        }
+        
+        //Add "next patients" to "move-in" array
+        for patient in nextPatients {
+            moveIn.append(patient.name)
+        }
+        //Randomize "move-in" array
+        moveIn.shuffle()
+        //Add patients in "move-in" array to procedure lines
+        for patientName in moveIn {
+            //Find the patient object
+            let patient = findPatientByName(name: patientName)
+            //Check if patient has more procedures
+            if patient != nil && patient!.hasMoreProcedures() {
+                //Yes - move patient to end of respective line
+                let procedureQueue = getArrayForProcedure(title: patient!.removeProcedure()!.title)
+                for label in procedureQueue {
+                    if label.text == "" {
+                        label.text = patientName
+                        break
+                    }
+                }
+            }
+        }
+        
+        recordsBank.tick()
+    }
+    
     //Populate the next patients array
     private func populateNextPatients(){
         nextPatients = []
@@ -329,6 +331,7 @@ class ViewController: UIViewController {
         }
         
     }
+    
     //Change size of labels to fit including text
     private func resizeLabels() {
         for label in col1 {
@@ -350,6 +353,7 @@ class ViewController: UIViewController {
             label.sizeToFit()
         }
     }
+    
     //Reset board
     private func resetGameBoard() {
         tick = 0

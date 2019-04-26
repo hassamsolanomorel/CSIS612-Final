@@ -54,7 +54,7 @@ class HealthRecordsBank{
                 record.holdTimeLeft -= 1
             }
         }
-
+        //Update the records on Front Desk
         let keys = Array(frontDeskLedger.keys)
         for key in keys {
             frontDeskLedger[key] = frontDeskLedger[key]! - 1
